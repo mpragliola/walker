@@ -23,11 +23,6 @@ func (b *walkBuilder) WithFS(fs fs.FS) *walkBuilder {
 	return b
 }
 
-func (b *walkBuilder) AddFilter(filter WalkFilter) *walkBuilder {
-	b.filters = append(b.filters, filter)
-	return b
-}
-
 func (b *walkBuilder) AddFilters(filters ...WalkFilter) *walkBuilder {
 	b.filters = append(b.filters, filters...)
 	return b

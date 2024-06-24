@@ -52,8 +52,8 @@ func TestFilters(t *testing.T) {
 		},
 		{
 			name:     "FilterStartsWith() without Base()",
-			filter:   walker.Base(walker.FilterStartsWith("a")),
-			expected: []bool{false, true, false, false, true},
+			filter:   walker.FilterStartsWith("a"),
+			expected: []bool{false, true, false, false, false},
 		},
 		{
 			name:     "FilterStartsWith() with Base()",
@@ -61,7 +61,7 @@ func TestFilters(t *testing.T) {
 			expected: []bool{false, true, false, false, true},
 		},
 		{
-			name:     "FilterRegex() with Not(Base())",
+			name:     "Not(Base(FilterRegex()))",
 			filter:   walker.Not(walker.Base(walker.FilterRegex("^a.*"))),
 			expected: []bool{true, false, true, true, false},
 		},

@@ -39,6 +39,7 @@ func FilterIdentity() WalkFilter {
 }
 
 // FilterExtensions returns a filter that matches the given extensions.
+// Include the dot in the extension.
 func FilterExtensions(exts ...string) WalkFilter {
 	return func(path string) (bool, error) {
 		for _, ext := range exts {
