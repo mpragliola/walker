@@ -6,67 +6,63 @@ import (
 	"github.com/mpragliola/walker"
 )
 
+// Just a series of paths ...
 var testData = []string{
 	"myFile.txt",
 	"abcd",
 	"myDir",
 	"myDir.md",
 	"myDir/aFile.txt",
+	"myDir/other.md",
 }
 
 func TestFilters(t *testing.T) {
-	for _, tt := range []struct {
-		name     string
+	for name, tt := range map[string]struct {
 		filter   walker.WalkFilter
 		expected []bool
 	}{
-		{
-			name:     "FilterIdentity()",
+		"FilterIdentity()": {
 			filter:   walker.FilterIdentity(),
-			expected: []bool{true, true, true, true, true},
+			expected: []bool{true, true, true, true, true, true},
 		},
-		{
-			name:     "Not FilterIdentity() (negation)",
+		"Not FilterIdentity() (negation)": {
 			filter:   walker.Not(walker.FilterIdentity()),
-			expected: []bool{false, false, false, false, false},
+			expected: []bool{false, false, false, false, false, false},
 		},
-		{
-			name:     "FilterExtensions()",
+		"Filter extensions .txt and .md": {
 			filter:   walker.FilterExtensions(".txt", ".md"),
-			expected: []bool{true, false, false, true, true},
+			expected: []bool{true, false, false, true, true, true},
 		},
-		{
-			name:     "Not FilterExtensions()",
+		"Filter extensions that are not .txt or .md": {
 			filter:   walker.Not(walker.FilterExtensions(".txt", ".md")),
-			expected: []bool{false, true, true, false, false},
+			expected: []bool{false, true, true, false, false, false},
 		},
-		{
-			name:     "FilterRegex()",
+		"Filter using a regex": {
 			filter:   walker.FilterRegex(".*i.*"),
-			expected: []bool{true, false, true, true, true},
+			expected: []bool{true, false, true, true, true, true},
 		},
-		{
-			name:     "Not FilterRegex()",
+		"Filter using a regex and Base()": {
+			filter:   walker.Base(walker.FilterRegex(".*i.*")),
+			expected: []bool{true, false, true, true, true, false},
+		},
+		"Filter excluding regex": {
 			filter:   walker.Not(walker.FilterRegex(".*i.*")),
-			expected: []bool{false, true, false, false, false},
+			expected: []bool{false, true, false, false, false, false},
 		},
-		{
-			name:     "FilterStartsWith() without Base()",
+		"FilterStartsWith() without Base()": {
 			filter:   walker.FilterStartsWith("a"),
-			expected: []bool{false, true, false, false, false},
+			expected: []bool{false, true, false, false, false, false},
 		},
-		{
-			name:     "FilterStartsWith() with Base()",
+		"FilterStartsWith() with Base()": {
 			filter:   walker.Base(walker.FilterStartsWith("a")),
-			expected: []bool{false, true, false, false, true},
+			expected: []bool{false, true, false, false, true, false},
 		},
-		{
-			name:     "Not(Base(FilterRegex()))",
+		"Not(Base(FilterRegex()))": {
 			filter:   walker.Not(walker.Base(walker.FilterRegex("^a.*"))),
-			expected: []bool{true, false, true, true, false},
+			expected: []bool{true, false, true, true, false, true},
 		},
 	} {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(name, func(t *testing.T) {
 			for i, source := range testData {
 				ok, err := tt.filter(source)
 
